@@ -29,11 +29,11 @@ jobs:
             password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Build Docker Image
         run: |
-          docker build --pull -t ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest .
+          docker build --pull -t ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}} .
       - name: Scan Docker image with trivy
         uses: aquasecurity/trivy-action@0.22.0
         with:
-            image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest
+            image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}}
             severity: CRITICAL,HIGH
             exit-code: 1
             ignore-unfixed: true
@@ -42,4 +42,4 @@ jobs:
             # trivyignores: .trivyignore
       - name: Push Docker Image
         run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}}
