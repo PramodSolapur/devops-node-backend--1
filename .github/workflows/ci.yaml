@@ -34,9 +34,10 @@ jobs:
         uses: aquasecurity/trivy-action@0.22.0
         with:
             image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest
-            severity: CRITICAL
+            severity: CRITICAL,HIGH
             exit-code: 1
             ignore-unfixed: true
+            trivyignores: .trivyignore
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest
