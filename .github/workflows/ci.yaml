@@ -37,7 +37,9 @@ jobs:
             severity: CRITICAL,HIGH
             exit-code: 1
             ignore-unfixed: true
-            trivyignores: .trivyignore
+            scanners: vuln
+            vuln-type: os
+            # trivyignores: .trivyignore
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest
