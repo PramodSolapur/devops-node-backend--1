@@ -23,6 +23,12 @@ RUN addgroup -S nodegroup && adduser -S nodeuser -G nodegroup
 COPY --from=builder /app/node_modules ./node_modules
 COPY --chown=nodeuser:nodegroup . .
 
+# Remove npm from runtime image (Alpine)
+RUN rm -rf /usr/lib/node_modules/npm \
+    /usr/bin/npm \
+    /usr/bin/npx
+
+
 # Select created user
 USER nodeuser
 
