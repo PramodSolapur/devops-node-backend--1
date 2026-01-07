@@ -22,10 +22,21 @@ jobs:
         run: |
           npm ci
           npm audit --audit-level=high
-      - name: Setup Docker BuildX
-        uses: docker/setup-buildx-action@v3
       - name: login to Docker Hub
         uses: docker/login-action@v3
         with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build Docker Image
+        run: |
+          docker build --pull -t ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest .
+      - name: Scan Docker image with trivy
+        uses: aquasecurity/trivy-action@0.22.0
+        with:
+            image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest
+            severity: CRITICAL,HIGH
+            exit-code: 1
+            ignore-unfixed: true
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:latest
