@@ -1,22 +1,22 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
-import express from "express";
+import express from 'express';
 
 const app = express();
 
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "OK" });
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'OK' });
 });
 
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   res.status(200).json({
-    status: "success",
-    message: "Welcome to Devops course",
+    status: 'success',
+    message: 'Welcome to Devops course',
   });
 });
 
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-  console.log("Server is running on port: ", port);
+  console.log('Server is running on port: ', port);
 });
