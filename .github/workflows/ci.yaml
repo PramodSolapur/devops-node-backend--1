@@ -45,6 +45,8 @@ jobs:
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}}
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v0.1.7
+        env:
+          PORT: 22
         with:
             host: ${{ secrets.EC2_HOST }}
             username: ${{ secrets.EC2_USER }}
