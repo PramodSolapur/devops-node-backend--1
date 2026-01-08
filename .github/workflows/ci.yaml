@@ -22,11 +22,6 @@ jobs:
         run: |
           npm ci
           npm audit --audit-level=high
-      - name: login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Build Docker Image
         run: |
           docker build --pull -t ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}} .
@@ -38,8 +33,26 @@ jobs:
             exit-code: 1
             ignore-unfixed: true
             scanners: vuln
-            vuln-type: os
+            vuln-type: os,library
             # trivyignores: .trivyignore
+      - name: login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Push Docker Image
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}}
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+            host: ${{ secrets.EC2_HOST }}
+            username: ${{ secrets.EC2_USER }}
+            key: ${{ secrets.EC2_SSH_KEY }}
+            script: |
+              docker pull ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}}
+
+              docker stop node-app || true
+              docker rm node-app || true
+
+              docker run -d --name node-app --restart=always -p 5000:5000 ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}}
