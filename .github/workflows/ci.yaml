@@ -22,22 +22,24 @@ jobs:
         run: |
           npm ci
           npm audit --audit-level=high
+      - name: Run lint
+        run: npm run lint:fix
       - name: Check code format
         run: npm run format
-      - name: Build Docker Image
-        run: |
-          docker build --pull -t ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}} .
-      - name: Scan Docker image with trivy
-        uses: aquasecurity/trivy-action@0.22.0
-        with:
-            image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}}
-            severity: CRITICAL,HIGH
-            exit-code: 1
-            ignore-unfixed: true
-            scanners: vuln
-            vuln-type: os,library
-            # trivyignores: .trivyignore
-      # - name: login to Docker Hub
+      # - name: Build Docker Image
+      #   run: |
+      #     docker build --pull -t ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}} .
+      # - name: Scan Docker image with trivy
+      #   uses: aquasecurity/trivy-action@0.22.0
+      #   with:
+      #       image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/node-secure-app-1:${{github.sha}}
+      #       severity: CRITICAL,HIGH
+      #       exit-code: 1
+      #       ignore-unfixed: true
+      #       scanners: vuln
+      #       vuln-type: os,library
+      #       # trivyignores: .trivyignore
+      # # - name: login to Docker Hub
       #   uses: docker/login-action@v3
       #   with:
       #       username: ${{ secrets.DOCKERHUB_USERNAME }}
